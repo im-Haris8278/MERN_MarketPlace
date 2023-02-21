@@ -4,11 +4,11 @@ import "./Dashboard.css";
 import { Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getMerchantProduct } from "../../actions/productAction";
+import { getMerchantProduct } from "../../actions/productAction.js";
 import { getAllOrders } from "../../actions/orderAction.js";
-import MetaData from "../layout/MetaData";
+import MetaData from "../layout/MetaData.js";
 
-const Dashboard = () => {
+const MerchantDashboard = () => {
   const dispatch = useDispatch();
 
   const { products } = useSelector((state) => state.products);
@@ -63,4 +63,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default MerchantDashboard;

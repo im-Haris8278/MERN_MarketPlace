@@ -4,8 +4,8 @@ import { Button, Typography, Avatar } from "@material-ui/core";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 const About = () => {
-  const visitInstagram = () => {
-    window.location = "https://www.instagram.com/__haris__baig__/";
+  const visitGitHub = () => {
+    window.location = "https://www.github.com/im-Haris8278";
   };
   return (
     <div className="aboutSection">
@@ -22,14 +22,17 @@ const About = () => {
               alt="Founder"
             />
             <Typography>Haris Baig</Typography>
-            <Button onClick={visitInstagram} color="primary">
-              Visit Instagram
+            <Button onClick={visitGitHub} color="primary">
+              Visit GitHub
             </Button>
-            <span>This is an E-Commerce Wesbite Made By @HarisBaig.</span>
+            <span>This is an MarketPlace Wesbite Made By @HarisBaig.</span>
           </div>
           <div className="aboutSectionContainer2">
             <Typography component="h2">Our Brands</Typography>
-            <a href="https://github.com/HarisBaig7081" target="blank">
+            <a
+              href="https://www.linkedin.com/in/haris-baig-665668231/"
+              target="blank"
+            >
               <LinkedInIcon className="linkedinSvgIcon" />
             </a>
 

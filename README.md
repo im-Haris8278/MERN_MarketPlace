@@ -1,4 +1,4 @@
-Hi! My name is **Haris Baig**, I have created this ECOMMERCE Project on MERN Stack.
+Hi! My name is **Haris Baig**, I have created this MarketPlace Project on MERN Stack.
 
 # Install Dependencies
 

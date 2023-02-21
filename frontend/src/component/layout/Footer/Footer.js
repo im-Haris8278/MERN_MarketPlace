@@ -15,7 +15,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="midFooter">
-        <h1>ECOMMERCE.</h1>
+        <h1>MarketPlace.</h1>
         <p>High Quality is our First Priority</p>
         <p>Copyright © 2022 Haris Baig</p>
       </div>

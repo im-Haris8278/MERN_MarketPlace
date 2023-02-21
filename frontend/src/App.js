@@ -30,7 +30,7 @@ import OrderSuccess from "./component/Cart/OrderSuccess";
 import MyOrders from "./component/Order/MyOrders";
 import OrderDetails from "./component/Order/OrderDetails";
 import AdminDashboard from "./component/Admin/Dashboard";
-import MerchantDashboard from "./component/Merchant/Dashboard";
+import MerchantDashboard from "./component/Merchant/MerchantDashboard";
 import ProductList from "./component/Merchant/ProductList";
 import NewProduct from "./component/Merchant/NewProduct";
 import UpdateProduct from "./component/Merchant/UpdateProduct";
