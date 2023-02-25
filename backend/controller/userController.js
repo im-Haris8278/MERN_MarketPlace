@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Shop = require("../models/shopModel");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
@@ -153,10 +154,12 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
 
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id);
+  const shop = await Shop.find({ user: req.user.id });
 
   res.status(200).json({
     success: true,
     user,
+    shop,
   });
 });
 
@@ -228,7 +231,7 @@ exports.getAllUser = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find();
 
   res.status(200).json({
-    sucess: true,
+    success: true,
     users,
   });
 });
@@ -237,6 +240,7 @@ exports.getAllUser = catchAsyncErrors(async (req, res, next) => {
 
 exports.getSingleUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
+  const shop = await Shop.find({ user: req.params.id });
 
   if (!user) {
     return next(
@@ -245,8 +249,9 @@ exports.getSingleUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   res.status(200).json({
-    sucess: true,
+    success: true,
     user,
+    shop,
   });
 });
 
@@ -267,6 +272,7 @@ exports.updateUserRole = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    user,
   });
 });
 
@@ -274,6 +280,9 @@ exports.updateUserRole = catchAsyncErrors(async (req, res, next) => {
 
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
+  const shop = await Shop.find({ user: req.params.id });
+
+  console.log(shop);
 
   if (!user) {
     return next(
@@ -281,10 +290,15 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
+  if (!shop) {
+    new ErrorHandler(`Shop Doesn't Exist with Id: ${req.params.id}`, 400);
+  }
+
   const imageId = user.avatar.public_id;
 
   await Cloudinary.v2.uploader.destroy(imageId);
 
+  await shop.delete();
   await user.remove();
 
   res.status(200).json({

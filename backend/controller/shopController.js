@@ -2,12 +2,37 @@ const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Shop = require("../models/shopModel");
 const ApiFeatures = require("../utils/apifeatures");
 const ErrorHandler = require("../utils/errorHandler");
+const cloudinary = require("cloudinary");
 
 // Register a Shop
 
 exports.shopRegister = catchAsyncErrors(async (req, res, next) => {
+  // let images = [];
+  // if (typeof req.body.images === "string") {
+  //   images.push(req.body.images);
+  // } else {
+  //   images = req.body.images;
+  // }
+
+  // const imagesLinks = [];
+
+  // for (let i = 0; i < images.length; i++) {
+  //   const result = await cloudinary.v2.uploader.upload(images[i], {
+  //     folder: "Shops",
+  //   });
+
+  //   imagesLinks.push({
+  //     public_id: result.public_id,
+  //     url: result.secure_url,
+  //   });
+  // }
+
+  // req.body.images = imagesLinks;
+
   const { name, slogan, description, address, shopEmail, shopContact } =
     req.body;
+
+  req.body.user = req.user.id;
 
   const shop = await Shop.create({
     name,
@@ -16,6 +41,7 @@ exports.shopRegister = catchAsyncErrors(async (req, res, next) => {
     shopEmail,
     shopContact,
     address,
+    user: req.user.id,
   });
 
   res.status(201).json({
@@ -27,6 +53,40 @@ exports.shopRegister = catchAsyncErrors(async (req, res, next) => {
 // Update Shop
 
 exports.shopUpdate = catchAsyncErrors(async (req, res, next) => {
+  //  Images Cloudinary
+
+  let images = [];
+
+  if (typeof req.body.images === "string") {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  if (images !== undefined) {
+    // Delete Images
+
+    for (let i = 0; i < product.images.length; i++) {
+      await cloudinary.v2.uploader.upload(images[i].public_id);
+    }
+
+    // Upload Images
+
+    const imagesLinks = [];
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: "Shops",
+      });
+
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    req.body.images = imagesLinks;
+  }
+
   const newShopData = {
     name: req.body.name,
     email: req.body.email,
@@ -47,7 +107,7 @@ exports.shopUpdate = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Delete Shop -- Admin && Merchant
+// Delete Shop -- Admin
 
 exports.shopDelete = catchAsyncErrors(async (req, res, next) => {
   const shop = await Shop.findById(req.params.id);
@@ -56,7 +116,14 @@ exports.shopDelete = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Shop not found", 404));
   }
 
-  await shop.remove();
+  // Delete Images
+
+  for (let i = 0; i < shop.images.length; i++) {
+    await cloudinary.v2.uploader.destroy(product.images[i].public_id);
+  }
+
+  await product.remove();
+
   res.status(200).json({
     success: true,
     message: "Shop Deleted Successfully!",
@@ -100,7 +167,7 @@ exports.getAdminShops = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get Shop Details
+// Get Shop Details -- Admin
 
 exports.getShopDetails = catchAsyncErrors(async (req, res, next) => {
   const shop = await Shop.findById(req.params.id);
