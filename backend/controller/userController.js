@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Shop = require("../models/shopModel");
+const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
@@ -276,13 +277,53 @@ exports.updateUserRole = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// Delete User Profile
+
+exports.deleteProfile = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return next(new ErrorHandler("User not Found", 404));
+  }
+
+  const imageId = user.avatar.public_id;
+
+  await Cloudinary.v2.uploader.destroy(imageId);
+
+  await user.remove();
+
+  res.status(200).json({
+    success: true,
+    message: "User Deleted Successfully",
+  });
+});
+
 // Delete User --- Admin
 
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
-  const shop = await Shop.find({ user: req.params.id });
 
-  console.log(shop);
+  if (user.role == "Merchant") {
+    const product = await Product.findOne({ user: req.params.id });
+
+    console.log(product);
+
+    if (!product) {
+      new ErrorHandler(`Product Doesn't Exist with Id: ${req.params.id}`, 400);
+    }
+
+    await product.remove();
+  }
+
+  if (user.role == "Merchant") {
+    const shop = await Shop.findOne({ user: req.params.id });
+
+    if (!shop) {
+      new ErrorHandler(`Shop Doesn't Exist with Id: ${req.params.id}`, 400);
+    }
+
+    await shop.remove();
+  }
 
   if (!user) {
     return next(
@@ -290,15 +331,10 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  if (!shop) {
-    new ErrorHandler(`Shop Doesn't Exist with Id: ${req.params.id}`, 400);
-  }
-
   const imageId = user.avatar.public_id;
 
   await Cloudinary.v2.uploader.destroy(imageId);
 
-  await shop.delete();
   await user.remove();
 
   res.status(200).json({

@@ -11,7 +11,7 @@ const shopSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please Enter Shop Slogan"],
     minLength: [8, "Slogan should be greater than 8 Characters"],
-    maxLenght: [30, "Slogan should not be greater than 30 Charachters"],
+    maxLength: [30, "Slogan should not be greater than 30 Charachters"],
   },
 
   description: {

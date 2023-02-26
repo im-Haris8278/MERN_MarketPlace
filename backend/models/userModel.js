@@ -26,6 +26,12 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 
+  shop: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Shop",
+    // required: true,
+  },
+
   avatar: {
     public_id: {
       type: String,

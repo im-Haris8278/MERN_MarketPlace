@@ -1,5 +1,6 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Shop = require("../models/shopModel");
+const Product = require("../models/productModel");
 const ApiFeatures = require("../utils/apifeatures");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
@@ -171,14 +172,20 @@ exports.getAdminShops = catchAsyncErrors(async (req, res, next) => {
 
 exports.getShopDetails = catchAsyncErrors(async (req, res, next) => {
   const shop = await Shop.findById(req.params.id);
+  const product = await Product.find({ user: req.params.id });
 
   if (!shop) {
     return next(new ErrorHandler("Shop not found", 404));
   }
 
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 404));
+  }
+
   res.status(200).json({
     success: true,
     shop,
+    product,
   });
 });
 
