@@ -84,11 +84,10 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
-  // shop: {
-  //   type: mongoose.Schema.ObjectId,
-  //   ref: "Shop",
-  //   required: true,
-  // },
+  shopId: {
+    type: String,
+    required: true,
+  },
 
   createdAt: {
     type: Date,

@@ -1,5 +1,6 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Product = require("../models/productModel");
+const Shop = require("../models/shopModel");
 const ApiFeatures = require("../utils/apifeatures");
 const ErrorHandler = require("../utils/errorHandler");
 const cloudinary = require("cloudinary");
@@ -28,10 +29,24 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
   // }
 
   // req.body.images = imagesLinks;
-  // req.body.shop = req.shop.id;
   req.body.user = req.user.id;
+  const shop = await Shop.find({ user: req.user.id });
+  const shopId = shop._id.toString();
 
-  const product = await Product.create(req.body);
+  const { name, description, price, images, category, stock } = req.body;
+
+  const productData = {
+    name,
+    description,
+    price,
+    images,
+    category,
+    stock,
+    shopId,
+    user: req.user.id,
+  };
+
+  const product = await Product.create(productData);
 
   res.status(201).json({
     success: true,
